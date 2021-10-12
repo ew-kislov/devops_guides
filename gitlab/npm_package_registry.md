@@ -29,3 +29,7 @@
 @btiwari-gitlab:registry=https://gitlab.com/api/v4/projects/26671151/packages/npm/
 //gitlab.com/api/v4/projects/26671151/packages/npm/:_authToken=<<<access token>>>
 ```
+
+## TODO
+
+- add tag for disabling version - #no-version

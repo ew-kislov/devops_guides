@@ -20,7 +20,7 @@ def write_changelog(version):
 
 def write_npm(version):
     versioning.npm("config", "set", "git-tag-version=false")
-    versioning.npm("version", version)
+    versioning.npm("version", version, "--allow-same-version")
 
 def main():
     # get latest tags before updating changelog and npm files
