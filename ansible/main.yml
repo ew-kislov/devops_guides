@@ -1,0 +1,23 @@
+---
+- hosts: development
+  remote_user: root
+  become: yes
+  become_method: sudo
+  vars:
+    temp_folder: /tmp
+    NODEJS_VERSION: "14"
+  tasks:
+    # Install prerequisites
+    - include: tasks/prerequisites.yml
+
+    # Install MongoDB
+    - include: tasks/mongodb.yml
+
+    # Install Node.js
+    - include: tasks/nodejs.yml
+
+    # Install Docker 
+    - include: tasks/docker.yml
+
+  handlers:
+    - include: handlers/main.yml

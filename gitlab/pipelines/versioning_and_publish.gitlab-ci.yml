@@ -1,0 +1,30 @@
+stages:
+  - version
+  - publish
+
+version:
+  image: python:3.7-stretch
+  stage: version
+  script:
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - ssh-keyscan gitlab.com >> ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - pip install semver
+    - python3 -m scripts.update-git-tags
+  only:
+    - master
+  except:
+      - tags
+
+publish:
+  image: node:14
+  stage: publish
+  script:
+    - npm config set @<your_workspace>:registry https://gitlab.com/api/v4/projects/<your project_id>/packages/npm/
+    - npm config set -- '//gitlab.com/api/v4/projects/<your_project_id>/packages/npm/:_authToken' "$CI_JOB_TOKEN"
+    - npm publish
+  only:
+    - master
+  except:
+      - tags
