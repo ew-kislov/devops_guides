@@ -19,10 +19,11 @@ def tag_repo(tag):
 
 
 def main():
-    version = versioning.get_new_version()
-    tag_repo(version)
+    new_version = versioning.get_new_version()
+    latest_version = versioning.get_latest_version()
 
-    print(version)
+    if new_version != latest_version:
+        tag_repo(new_version)
 
     return 0
 
