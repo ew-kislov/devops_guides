@@ -26,8 +26,12 @@
 
 1. Update .npmrc for **all projects using your published package**
 ```
-@btiwari-gitlab:registry=https://gitlab.com/api/v4/projects/26671151/packages/npm/
-//gitlab.com/api/v4/projects/26671151/packages/npm/:_authToken=<<<access token>>>
+# for instance level
+@org:registry=https://gitlab.com/api/v4/packages/npm/
+# for project level
+@org:registry=https://gitlab.com/api/v4/projects/project_id/packages/npm/
+# for any case
+//gitlab.com/api/v4/projects/project_id/packages/npm/:_authToken=<<<access token>>>
 ```
 
 ## TODO

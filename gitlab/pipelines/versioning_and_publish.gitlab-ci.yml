@@ -20,8 +20,9 @@ publish:
   image: node:14
   stage: publish
   script:
-    - npm config set @mmo.delivery:registry https://gitlab.com/api/v4/projects/29850527/packages/npm/
-    - npm config set -- '//gitlab.com/api/v4/projects/29850527/packages/npm/:_authToken' "$CI_JOB_TOKEN"
+    - npm config set @org:registry https://gitlab.com/api/v4/packages/npm/
+    - npm config set -- '//gitlab.com/api/v4/packages/npm/:_authToken' "$CI_JOB_TOKEN"
+    - npm config set -- '//gitlab.com/api/v4/projects/project_id/packages/npm/:_authToken' "$CI_JOB_TOKEN"
     # catching error from publishing in case upcoming version is the same as previous
     - npm publish || true
   only:
