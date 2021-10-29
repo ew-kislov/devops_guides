@@ -1,0 +1,49 @@
+image: docker:latest
+
+stages:
+    - build
+    - deploy
+
+variables:
+    CONTAINER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+    CONTAINER_NAME: $CI_PROJECT_NAME
+
+services:
+    - docker:dind
+
+before_script:
+    - apk add openssl-dev libffi-dev
+    - apk add --no-cache docker-compose
+
+build:
+    stage: build
+    script:
+        - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+        - cp $ENV_FILE ./.env
+        - echo -e "\nIMAGE_APP_TAG=$CONTAINER_IMAGE" >> .env
+        - cp $NPMRC .npmrc
+        - docker-compose build
+        - docker-compose push
+        - rm .env
+        - rm .npmrc
+
+deploy:
+    stage: deploy
+    script:
+        - eval $(ssh-agent -s)
+        - echo "$SSH_PRIVATE_KEY"
+        - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+        - mkdir -p ~/.ssh
+        - chmod 700 ~/.ssh
+        - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY
+        - cp $ENV_FILE ./.env
+        - echo -e "\nIMAGE_APP_TAG=$CONTAINER_IMAGE" >> .env
+        - cp $NPMRC .npmrc
+        - export DOCKER_HOST=ssh://$DEPLOY_USER@$DEPLOY_IP
+        - docker-compose down --remove-orphans
+        - docker-compose pull
+        - docker-compose up -d
+        - unset DOCKER_HOST
+        - rm .env
+        - rm .npmrc

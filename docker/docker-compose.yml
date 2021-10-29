@@ -1,0 +1,29 @@
+version: "3.3"
+
+services:
+  mongo:
+    image: mongo:latest
+    restart: always
+    env_file: ./.env
+    ports:
+      - ${MONGO_PORT}:${MONGO_PORT}
+    environment:
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+      MONGODB_DATABASE: ${MONGO_DB}
+    volumes:
+      - db:/data/db
+      
+  app:
+    image: ${IMAGE_APP_TAG}
+    build: ./
+    restart: always
+    ports:
+      - 80:${PORT}
+    env_file: ./.env
+    depends_on:
+      - mongo
+    links:
+      - mongo
+
+volumes:
+  db:
